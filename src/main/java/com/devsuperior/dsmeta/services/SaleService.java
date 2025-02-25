@@ -2,6 +2,7 @@ package com.devsuperior.dsmeta.services;
 
 import com.devsuperior.dsmeta.dto.ReportDTO;
 import com.devsuperior.dsmeta.dto.SaleMinDTO;
+import com.devsuperior.dsmeta.dto.SaleSummaryDTO;
 import com.devsuperior.dsmeta.entities.Sale;
 import com.devsuperior.dsmeta.projections.ReportProjection;
 import com.devsuperior.dsmeta.repositories.SaleRepository;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -40,5 +42,16 @@ public class SaleService {
                 (LocalDate.parse(minDate), LocalDate.parse(maxDate), name, pageable);
 
         return reportProjections.map(ReportDTO::new);
+    }
+
+    public List<SaleSummaryDTO> findSummaryBySeller(String minDate, String maxDate) {
+
+        if (minDate.isBlank() && maxDate.isBlank()) {
+            minDate = today.minusYears(1L).toString();
+            maxDate = today.toString();
+            return repository.searchSummary(LocalDate.parse(minDate), LocalDate.parse(maxDate));
+        }
+
+        return repository.searchSummary(LocalDate.parse(minDate), LocalDate.parse(maxDate));
     }
 }
